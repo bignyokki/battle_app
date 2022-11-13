@@ -1,5 +1,15 @@
 <div id="app">
   <v-app>
+    <v-system-bar>
+        Battle Game
+      <v-spacer></v-spacer>
+      <% if user_signed_in? %>
+        <%= current_user.user_name %>
+        <%= link_to "ログアウト", destroy_user_session_path, method: :delete %>
+      <% else %>
+        Waiting Login...
+      <% end %>
+    </v-system-bar>
 
     <h2>Sign up</h2>
     <v-card>
