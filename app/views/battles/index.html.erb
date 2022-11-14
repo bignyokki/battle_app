@@ -1,0 +1,26 @@
+<div id="app">
+  <v-app>
+    <v-system-bar>
+        Battle Game
+      <v-spacer></v-spacer>
+      <% if user_signed_in? %>
+        <%= current_user.user_name %>
+        <%= link_to "ログアウト", destroy_user_session_path, method: :delete %>
+      <% else %>
+        Waiting Login...
+      <% end %>
+    </v-system-bar>
+
+    welcome!
+
+  </v-app>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script>
+    new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+    })
+  </script>
