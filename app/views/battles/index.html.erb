@@ -11,16 +11,95 @@
       <% end %>
     </v-system-bar>
 
-    welcome!
+    <start-component
+      v-show="active === 1"
+      @start-com-event="activate"
+    ></start-component>
+
+    <wave-component
+      v-show="active === 2"
+      @start-com-event="activate"
+    ></wave-component>
+
+    <battle-component
+      v-show="active === 3"
+    ></battle-component>
+
+
 
   </v-app>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.7.11/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-router@4.0.15/dist/vue-router.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.6.12/dist/vuetify.js"></script>
 <script>
-    new Vue({
-      el: '#app',
-      vuetify: new Vuetify(),
-    })
-  </script>
+
+let startComponent = {
+  template: `
+    <div class="start-component">
+      <v-btn
+        class="text-h1"
+        outlined
+        height="auto"
+        @click="nextScreen"
+      >
+        GAME START
+      </v-btn>
+    </div>
+  `,
+  data(){
+    return{}
+  },
+  methods: {
+    nextScreen(){
+      this.$emit('start-com-event', 2);
+    }
+  }
+}
+
+let waveComponent = {
+  template: `
+    <div class="wave-component">
+      <p class="text-h2">wave 1</p>
+    </div>
+  `,
+  data(){
+    return{}
+  },
+  mounted: function(){
+    setInterval(() => {
+      this.$emit('start-com-event', 3);
+    }, 3000);
+  }
+}
+
+let battleComponent = {
+  template: `
+    <div>
+      battle screen
+    </div>
+  `
+}
+
+let app = new Vue({
+  el: '#app',
+  vuetify: new Vuetify(),
+  data(){
+    return{
+      active: 1,
+    }
+  },
+  components: {
+    startComponent,
+    waveComponent,
+    battleComponent
+  },
+  methods: {
+    activate(e){
+      this.active = e;
+    }
+  }
+})
+ 
+</script>
