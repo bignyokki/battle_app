@@ -12,17 +12,17 @@
     </v-system-bar>
 
     <start-component
-      v-show="active === 1"
-      @start-com-event="activate"
+      v-show="active === 0"
+      @next-screen="nextScreen"
     ></start-component>
 
     <wave-component
-      v-show="active === 2"
-      @start-com-event="activate"
+      v-show="active === 1"
     ></wave-component>
 
     <battle-component
-      v-show="active === 3"
+      ref="battle"
+      v-show="active === 2"
     ></battle-component>
 
 
@@ -53,7 +53,7 @@ let startComponent = {
   },
   methods: {
     nextScreen(){
-      this.$emit('start-com-event', 2);
+      this.$emit('next-screen');
     }
   }
 }
@@ -66,20 +66,112 @@ let waveComponent = {
   `,
   data(){
     return{}
-  },
-  mounted: function(){
-    setInterval(() => {
-      this.$emit('start-com-event', 3);
-    }, 3000);
   }
 }
 
 let battleComponent = {
   template: `
-    <div>
-      battle screen
+    <div class="battle-component">
+      <v-container>
+        <v-row justify="center">
+          <v-col cols=4 v-for="(enemy, i) in enemies" :key="enemy.name">
+            <v-card @click="calcDamage(i)">
+              <p v-text="enemy.name"></p>
+              <p>HP: {{ enemy.hp }}</p>
+            </v-card>
+            <v-card class="d-flex justify-center">
+              <img :src="enemy.img" width="200px">
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="9">
+            <v-card>
+              <v-card-text>
+                <p>マサの攻撃　=> ギャル男には効かなかった！</p>
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <v-col>
+            <v-card>
+              <v-card-text>
+                <p>たたかう</p>
+                <p>まほう</p>
+                <p>まもる</p>
+                <p>にげる</p>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
     </div>
-  `
+  `,
+  data(){
+    return{
+      displayEnemies: [
+        {
+          id: 0,
+          name: "",
+          hp: 0,
+          img: "",
+          down: false
+        },
+        {
+          id: 0,
+          name: "",
+          hp: 0,
+          img: "",
+          down: false
+        },
+        {
+          id: 0,
+          name: "",
+          hp: 0,
+          img: "",
+          down: false
+        },
+      ],
+      enemies: [
+        {
+          id: 0,
+          name: "ギャル男",
+          hp: 10,
+          img: "/gal_o_man.png"
+        },
+        {
+          id: 1,
+          name: "ヤンキー",
+          hp: 20,
+          img: "mild_yankee_dqn.png"
+        },
+        {
+          id: 2,
+          name: "オタク",
+          hp: 8,
+          img: "otaku_winter.png"
+        }
+      ],
+      enemyGroups: [
+        [1, 2, 3],
+        [1, 2, 3],
+        [1, 1, 2]
+      ]
+    }
+  },
+  methods: {
+    calcDamage(i) {
+      console.log(i);
+      console.log(this.enemies[i].hp);
+      console.log(this.displayEnemies[0].hp);
+      this.enemies[i].hp -= 1;
+    }
+  },
+  mounted: function() {
+      this.displayEnemies = this.enemies.map( enemy => ({...enemy}))
+      this.displayEnemies[0].hp = 5;
+      
+      console.log(this.enemies[0].hp);
+  }
 }
 
 let app = new Vue({
@@ -87,7 +179,7 @@ let app = new Vue({
   vuetify: new Vuetify(),
   data(){
     return{
-      active: 1,
+      active: 0,
     }
   },
   components: {
@@ -96,8 +188,11 @@ let app = new Vue({
     battleComponent
   },
   methods: {
-    activate(e){
-      this.active = e;
+    nextScreen() {
+      this.active = 1;
+      setInterval(() => {
+        this.active = 2;
+      }, 3000);
     }
   }
 })
