@@ -18,6 +18,7 @@
 
     <wave-component
       v-show="active === 1"
+      :wave="wave"
     ></wave-component>
 
     <battle-component
@@ -61,11 +62,16 @@ let startComponent = {
 let waveComponent = {
   template: `
     <div class="wave-component">
-      <p class="text-h2">wave 1</p>
+      <p class="text-h2">wave {{ wave }}</p>
     </div>
   `,
   data(){
     return{}
+  },
+  props: {
+    wave: {
+      type: Number,
+    }
   }
 }
 
@@ -74,12 +80,18 @@ let battleComponent = {
     <div class="battle-component">
       <v-container>
         <v-row justify="center">
-          <v-col cols=4 v-for="(enemy, i) in enemies" :key="enemy.name">
-            <v-card @click="calcDamage(i)">
+          <v-col cols=4 v-for="(enemy, i) in displayEnemies" :key="enemy.name">
+            <v-card
+              @click="calcDamage(i)"
+              :disabled="displayEnemies[i].hp <= 0"
+            >
               <p v-text="enemy.name"></p>
               <p>HP: {{ enemy.hp }}</p>
             </v-card>
-            <v-card class="d-flex justify-center">
+            <v-card 
+              class="d-flex justify-center"
+              :disabled="displayEnemies[i].hp <= 0"
+            >
               <img :src="enemy.img" width="200px">
             </v-card>
           </v-col>
@@ -88,7 +100,7 @@ let battleComponent = {
           <v-col cols="9">
             <v-card>
               <v-card-text>
-                <p>マサの攻撃　=> ギャル男には効かなかった！</p>
+                <p>マサの攻撃 => ギャル男には効かなかった！</p>
               </v-card-text>
             </v-card>
           </v-col>
@@ -104,10 +116,16 @@ let battleComponent = {
           </v-col>
         </v-row>
       </v-container>
+      <v-card class="clear-modal" v-show="clear">
+        <v-card-title>
+          クリア!
+        </v-card-title>
+      </v-card>
     </div>
   `,
   data(){
     return{
+      clear: false,
       displayEnemies: [
         {
           id: 0,
@@ -160,17 +178,20 @@ let battleComponent = {
   },
   methods: {
     calcDamage(i) {
-      console.log(i);
-      console.log(this.enemies[i].hp);
-      console.log(this.displayEnemies[0].hp);
-      this.enemies[i].hp -= 1;
+      this.displayEnemies[i].hp -= 1;
+      if (this.displayEnemies[i].hp <= 0) {
+        if (this.displayEnemies[0].hp <= 0 && this.displayEnemies[1].hp <= 0 && this.displayEnemies[2].hp <= 0) {
+          console.log("クリア");
+          this.clear = true;
+        }
+      }
+    },
+    checkClear() {
+      console.log("発火");
     }
   },
   mounted: function() {
-      this.displayEnemies = this.enemies.map( enemy => ({...enemy}))
-      this.displayEnemies[0].hp = 5;
-      
-      console.log(this.enemies[0].hp);
+    this.displayEnemies = this.enemies.map( enemy => ({...enemy}))
   }
 }
 
@@ -180,6 +201,7 @@ let app = new Vue({
   data(){
     return{
       active: 0,
+      wave: 0,
     }
   },
   components: {
@@ -189,10 +211,11 @@ let app = new Vue({
   },
   methods: {
     nextScreen() {
+      this.wave += 1;
       this.active = 1;
       setInterval(() => {
         this.active = 2;
-      }, 3000);
+      }, 2000);
     }
   }
 })

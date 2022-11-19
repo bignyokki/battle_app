@@ -40,3 +40,11 @@
   justify-content: center;
   align-items: center;
 }
+
+.clear-modal {
+  width: 300px;
+  height: 300px;
+  position: fixed;
+  inset: 0;
+  margin: auto;
+}
