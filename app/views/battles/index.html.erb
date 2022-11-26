@@ -24,7 +24,8 @@
     <battle-component
       ref="battle"
       v-show="active === 2"
-      :stage="wave"
+      :wave="wave"
+      @next-screen="nextScreen"
     ></battle-component>
 
 
@@ -103,7 +104,7 @@ let battleComponent = {
             <v-card>
               <v-card-text>
                 <p>マサの攻撃 => ギャル男には効かなかった！</p>
-                {{stage}}
+                {{wave}}
               </v-card-text>
             </v-card>
           </v-col>
@@ -120,9 +121,20 @@ let battleComponent = {
         </v-row>
       </v-container>
       <v-card class="clear-modal" v-show="clear">
-        <v-card-title>
+        <v-card-title
+          class="text-h2"
+          style="justify-content: center;"
+        >
           クリア!
         </v-card-title>
+        <v-btn
+          class="text-h2"
+          outlined
+          height="auto"
+          @click="nextScreen"
+        >
+          NEXT STAGE
+        </v-btn>
       </v-card>
     </div>
   `,
@@ -159,7 +171,7 @@ let battleComponent = {
     }
   },
   props: {
-    stage: {
+    wave: {
       type: Number
     }
   },
@@ -172,12 +184,12 @@ let battleComponent = {
       this.displayEnemies[i].hp -= 1;
       if (this.displayEnemies[i].hp <= 0) {
         if (this.displayEnemies[0].hp <= 0) {
-          if (this.enemyGroups[this.stage - 1].length === 1) {
+          if (this.enemyGroups[this.wave - 1].length === 1) {
             console.log("発火")
             this.clear = true;
           } else {
             if (this.displayEnemies[1].hp <= 0) {
-              if (this.enemyGroups[this.stage - 1].length === 2) {
+              if (this.enemyGroups[this.wave - 1].length === 2) {
                 this.clear = true;
               } else {
                 if (this.displayEnemies[2].hp <= 0) {
@@ -193,6 +205,11 @@ let battleComponent = {
       for(let i = 0; i < this.enemyGroups[wave - 1].length; i++) {
         this.displayEnemies.push(JSON.parse(JSON.stringify(this.enemies[this.enemyGroups[wave - 1][i]])))
       }
+    },
+    nextScreen: function(){
+      this.clear = false;
+      this.displayEnemies.splice(0);
+      this.$emit('next-screen');
     }
   }
 }

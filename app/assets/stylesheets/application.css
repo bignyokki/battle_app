@@ -42,9 +42,10 @@
 }
 
 .clear-modal {
-  width: 300px;
+  width: 500px;
   height: 300px;
   position: fixed;
   inset: 0;
   margin: auto;
+  padding: 50px;
 }
